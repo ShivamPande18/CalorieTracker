@@ -1,25 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import {useState} from "react";
+import Container from "./Components/Container";
+import ContainerBlank from "./Components/ContainerBlank";
+import Header from "./Components/Header";
+import NavBar from "./Components/NavBar";
 
-function App() {
+const App = () =>{
+  const [searchText, setSearchText] = useState("");
+  const [totalCal, setTotalCal] = useState(0);
+
+  const [calorieList, setCalorieList] = useState([]);
+
+  const addCalories = (foodData) =>{
+    setTotalCal(totalCal + (foodData["calories"] * foodData["serving"]));
+    const newFoodList = [...calorieList, foodData]
+    setCalorieList(newFoodList);
+  }
+
+  const removeCalorie = (foodId) =>{
+    const newFoodList = calorieList.filter((food) => food["id"] !== foodId);
+    setCalorieList(newFoodList);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+    <div className = "app"> 
+      <NavBar/>
+      <Header addCalories={addCalories}/>
+      {
+        calorieList.length === 0 ? <ContainerBlank /> : <Container calorieList={calorieList.filter((item) => item["name"].toLowerCase().includes(searchText))} removeCalorie={removeCalorie} handleSearch={setSearchText} totalCalorie={totalCal}/>
+      }
+      {/* <Demo/> */}
 
+    </div>
+  )
+}
 export default App;
